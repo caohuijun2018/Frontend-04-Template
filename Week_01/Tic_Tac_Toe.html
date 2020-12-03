@@ -1,0 +1,151 @@
+<style>
+    .cell {
+        width: 100px;
+        height: 100px;
+        background-color: green;
+        display: inline-block;  
+        border: solid 1px white;
+        vertical-align: middle;
+
+        line-height: 100px;
+        font-size: 50px;
+        text-align: center;
+    }
+</style>
+<div id = "board"></div>
+<script>
+    let pattern = [
+        [0,0,0],
+        [0,0,0],
+        [0,0,0]
+    ]
+    let color = 1;
+    function show(){
+        let board = document.getElementById("board");  
+        board.innerHTML = ""; //show之间将棋盘清空
+
+        for(let i = 0; i < 3; i++){
+            for(let j = 0; j < 3; j++){
+                let cell = document.createElement("div");
+                cell.classList.add("cell");  //加上class之后可以加css
+                cell.innerText = pattern[j][i] == 2 ? "❌" :
+                  pattern[j][i] == 1 ? "⭕️" : "";
+
+                cell.addEventListener("click", () => move(i,j)); //添加事件,应该是i，j，不是j，i
+                board.appendChild(cell);
+            }
+            board.appendChild(document.createElement("br"))
+        }
+    }
+
+    function move(x,y){
+        pattern[y][x] = color;
+        if(check(pattern,color)) {
+            alert(color == 2 ? "❌ is the winner!" : "⭕️ is the winner!");
+        }
+        color = 3 - color;  //一变二，二变一
+        show();
+        if(willWin(pattern,color)){
+            console.log(color == 2 ? "❌ will be the winner!" : "⭕️ will be the winner!")
+        }
+    }
+
+
+    function check(pattern,color) {
+        for(let i = 0; i < 3; i++){ //三横行
+            let win = true;
+            for(let j = 0; j < 3; j++){  //遍历这一行
+                if(pattern[i][j] !== color){
+                    win = false;
+                }
+            }
+            if(win){
+                return true;
+            }
+        }
+        for(let i = 0; i < 3; i++){
+            let win = true;
+            for(let j = 0; j < 3; j++){
+                if(pattern[j][i] !== color){
+                    win = false;
+                }
+            }
+            if(win)
+                return true;
+        }
+        {  //斜像一
+            let win = true;
+            for(let j = 0; j < 3; j++){
+                if(pattern[j][j] !== color){
+                    win = false;
+                }
+    
+            }
+            if(win)
+                return true;
+                
+        }
+        { //斜像二
+            let win = true;
+            for(let j = 0; j < 3; j++){
+                if(pattern[j][2 -j] !== color){
+                    win =false;
+                }
+                
+            }
+            if(win)
+                 return true;
+        }
+    }
+    function clone(pattern){
+        return JSON.parse(JSON.stringify(pattern)); //克隆当前的pattern
+    }
+    function willWin(pattern,color){  //检查当前情况下是否可赢
+        for(let i = 0; i < 3; i++){
+            for(let j = 0; j < 3; j++){
+                if(pattern[i][j])  //遍历到的这一点不为空
+                    continue;
+                let tmp = clone(pattern);  //为空时，克隆下当前的pattern
+                tmp[i][j] = color;
+                if(check(tmp,color)){
+                    return [j,i];
+                }
+                
+            }
+        }
+        return null;
+    }
+    function bestChoice(pattern,color){
+        let p;
+        if(p = willWin(pattern,color)){
+            return {
+                point: p,
+                result: 1
+            }
+        }   
+        let result = -2;
+        let point = null;
+        for(let i = 0; i < 3; i++){
+            for(let j = 0; j < 3; j++){
+                if(pattern[i][j]){
+                    continue;
+                }
+                let tmp = clone(pattern);
+                tmp[i][j] = color;
+                let r = bestChoice(tmp,3-color).result;  //对手的最差的点
+
+                if(- r > result){
+                    result = -r;
+                    point = [j,i];  //当前的point置为对手的最差的点
+                }
+            }
+        } 
+        return {
+            point : point,
+            result : point ? result :0
+        }
+    }
+    show(pattern)
+    console.log(bestChoice(pattern,color));
+
+</script>
