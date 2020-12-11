@@ -16,7 +16,7 @@
 <script>
     let pattern = [
         0, 0, 0,
-        0, 2, 0,
+        0, 0, 0,
         0, 0, 0
     ]
     let color = 1;
@@ -101,7 +101,7 @@
         { //斜像二
             let win = true;
             for (let j = 0; j < 3; j++) {
-                if (pattern[j * 3 + 2 + j] !== color) {
+                if (pattern[j * 3 + 2 - j] !== color) {
                     win = false;
                 }
 
