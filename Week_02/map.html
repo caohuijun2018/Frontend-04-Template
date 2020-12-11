@@ -1,0 +1,58 @@
+<style>
+.cell{
+    display: inline-block;
+    line-height: 7px;
+    width: 6px;
+    height: 6px;
+    background-color: gray;
+    border-bottom: solid 1px white;
+    vertical-align: top;
+}
+</style>
+<div id = "container">
+
+</div>
+<button onclick = "localStorage['map'] = JSON.stringify(map)">save</button>
+<script>
+let map = localStorage['map'] ? JSON.parse(localStorage["map"]) : Array(10000).fill(0);//采用一维数组保存
+    //初始画一个map，如果map已经存在，就调出这个map
+// for(let i = 0; i < 10000;i++){
+//     map[i] = 0 ;
+// }
+let container = document.getElementById("container");
+for(let y = 0; y < 100; y++){
+    for(let x = 0; x < 100; x++){
+        let cell = document.createElement("div"); //为每一格常见单元格  
+        cell.classList.add("cell");
+
+        if(map[100 * y + x == 1]){ //有墙
+            cell.style.backgroundColor="black";
+        }
+
+        cell.addEventListener("mousemove", () => {
+            if(mousedown){
+                if(clear){
+                    cell.style.background = "";
+                    map[100 * y + x] == 0;
+                }else{
+                    cell.style.backgroundColor = "black";
+                    map[100 * y + 1] = 1;
+                }
+            }
+        })
+        container.appendChild(cell);
+    }
+}
+let mousedown = false;
+let clear = false;
+document.addEventListener("mousedown", e => {
+    mousedown = true;
+    clear = (e.which === 3)
+});
+document.addEventListener("mouseup",() => mousedown = false);
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+function path(map,start,end){
+
+}
+</script>
