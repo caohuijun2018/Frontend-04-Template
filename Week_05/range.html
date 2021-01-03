@@ -1,0 +1,63 @@
+<div id="container" style="-webkit-user-select: none;"> 如果我们都是孩子,就可以留在时光的原地,坐在一起一边听那些永不老去的故事一边慢慢皓首.
+我忘记了哪年哪月的哪一天我在哪面墙上刻下了一张脸一张微笑着忧伤着凝望着我的脸那些刻在椅背后的爱会不会像水泥地上的花朵　开出地老天荒的　没有风的森林
+不是每一次努力都会有收获，但是，每一次收获都必须努力，这是一个不公平的不可逆转的命题。当你真正爱一样东西的时候你就会发现语言多么的脆弱和无力。文字与感觉永远有隔阂。
+遗忘 是我们不可更改的宿命 所有的一切都像是没有对齐的图纸 从前的一切回不到过去 就这样慢慢延伸 一点一点的错开来 也许 错开了的东西 我们真的应该遗忘了
+什么叫快乐？就是掩饰自己的悲伤对每个人微笑。坚硬的城市里没有柔软的爱情 生活不是林黛玉，不会因为忧伤而风情万种 人永远看不破的镜花水月，不过我指间烟云世间千年如我一瞬
+记忆想是倒在掌心的水 不论你摊开还是紧握 终究还是会从指缝中 一滴一滴 流淌干净。
+谁是谁生命中的过客,谁是谁生命的转轮,前世的尘,今世的风,无穷无尽的哀伤的精魂.我回过头去看自己成长的道路，一天一天地观望，我站在路边上，双手插在风衣的兜里看到无数的人群从我身边面无表情地走过，偶尔有人停下来对我微笑，灿若桃花。我知道这些停留下来的人终究会成为我生命中的温暖，看到他们，我会想起不离不弃。　
+</div>
+
+<div id="draggable" style="display: inline-block;width: 100px; height: 100px; background-color: yellowgreen;">
+
+</div>
+
+<script>
+    let draggable = document.getElementById('draggable');
+    let baseX = 0;
+    let baseY = 0;
+    draggable.addEventListener('mousedown', function(event) {
+        let startX = event.clientX;
+        let startY = event.clientY;
+
+        let up = (event) => {
+            document.removeEventListener('mouseup', up);
+            document.removeEventListener('mousemove', move);
+            baseX = event.clientX - startX + baseX;
+            baseY = event.clientY - startY + baseY;
+            console.log('up', baseX, baseY)
+        }
+        let move = (event) => {
+            console.log(baseX, baseY)
+            // draggable.style.transform = `translate(${event.clientX - startX + baseX}px, ${event.clientY - startY + baseY}px)`
+
+            let range = getNearest(event.clientX, event.clientY);
+            range.insertNode(draggable);
+        }
+        document.addEventListener('mousemove', move)
+        document.addEventListener('mouseup', up)
+    })
+    let ranges = [];
+    let container = document.getElementById('container');
+    for(let i=0; i< container.childNodes[0].textContent.length; i++) {
+        let range = document.createRange();
+        range.setStart(container.childNodes[0], i);
+        range.setEnd(container.childNodes[0], i);
+        console.log(range.getBoundingClientRect());
+        ranges.push(range);
+    }
+
+    function getNearest(x, y) {
+        let min = Infinity;
+        let nearest = null;
+        for(let range of ranges) {
+            let rect = range.getBoundingClientRect();
+            let distance = (rect.x - x) ** 2 + (rect.y - y) ** 2;
+            if(distance < min) {
+                nearest = range;
+                min = distance;
+            }
+        }
+
+        return nearest;
+    }
+</script>
